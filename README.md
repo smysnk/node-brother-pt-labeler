@@ -8,6 +8,8 @@ A node.js library to print labels on a Brother label printer using the [Internet
 ## How to print a PNG file
 First, you will need the IP address of your printer. The port for IPP is usually `631` and the path is usually `/ipp/print`. Please refer to your printer's manual for further information. Next, you will need a PNG file to print. Currently, PNG is the only file format supported by this library.
 
+
+### Existing PNG
 ```javascript
 const { printPngFile } = require('brother-pt-labeler');
 const printerUrl = 'http://192.168.178.71:631/ipp/print';
@@ -17,6 +19,36 @@ printPngFile(printerUrl, `./samples/name-tag-${ tapeWidth }mm.png`, {
   tapeWidth,
   highResolution: false,  
 });
+```
+
+### Create PNG using [node-canvas](https://www.npmjs.com/package/canvas) and using `printBuffer` command:
+```javascript
+const { printPngFile } = require('brother-pt-labeler');
+const { createCanvas, Image } = require('canvas');
+const util = require('util');
+const pngparse = require('pngparse');
+
+const printerUrl = 'http://192.168.178.71:631/ipp/print';
+const tapeWidth = 18;
+const tapeWidthDots = 128; // 18mm
+  
+const canvas = createCanvas(400, tapeWidth);
+const ctx = canvas.getContext('2d', { pixelFormat: 'A1' });
+ctx.antialias = 'none';
+ctx.font = `50px Arial`;
+ctx.fillStyle = 'rgba(0,0,0,1)';
+ctx.fillText('This is a test', 0, 0);
+const palette = new Uint8ClampedArray([
+  255, 255, 255, 255,
+  0,  0,  0, 255,
+]);
+printBuffer(printerUrl, canvas.toBuffer('image/png',
+  { palette },
+  { 
+    tapeWidth,
+    highResolution: false,  
+  },
+));
 ```
 
 See the [samples](https://github.com/smysnk/node-brother-pt-labeler/tree/master/samples) folder example png's.

@@ -243,10 +243,15 @@ async function convert(image, options = {
 }
 
 export const printPngFile = async function(printerUrl, filename, options) {
-  // read PNG file
   let parseFile = util.promisify(pngparse.parseFile);
   let img = await parseFile(filename);
   
   let printData = await convert(img, options);
+  return await doPrint(printerUrl, printData);
+};
+
+export const printBuffer = async function(printerUrl, buffer, options) {
+  let parse = util.promisify(pngparse.parse);
+  let printData = await convert(await parse(buffer), options);
   return await doPrint(printerUrl, printData);
 };
