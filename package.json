@@ -1,8 +1,8 @@
 {
   "name": "brother-pt-labeler",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Print labels with Brother's P-Touch label printers using node",
-  "homepage": "https://github.com/smynsk/brother-pt-labeler",
+  "homepage": "https://github.com/smynsk/node-brother-pt-labeler",
   "main": "dist/brother.js",
   "author": "Joshua Bellamy",
   "license": "AGPL-3.0-or-later",
