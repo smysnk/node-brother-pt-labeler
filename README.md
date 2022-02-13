@@ -21,7 +21,7 @@ printPngFile(printerUrl, `./samples/name-tag-${ tapeWidth }mm.png`, {
 });
 ```
 
-### Create PNG using [node-canvas](https://www.npmjs.com/package/canvas) and using `printBuffer` command:
+### Create PNG using [node-canvas](https://www.npmjs.com/package/canvas) and print using `printBuffer` command:
 ```javascript
 const { printBuffer } = require('brother-pt-labeler');
 const { createCanvas, Image } = require('canvas');
