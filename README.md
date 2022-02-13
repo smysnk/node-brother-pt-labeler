@@ -23,7 +23,7 @@ printPngFile(printerUrl, `./samples/name-tag-${ tapeWidth }mm.png`, {
 
 ### Create PNG using [node-canvas](https://www.npmjs.com/package/canvas) and using `printBuffer` command:
 ```javascript
-const { printPngFile } = require('brother-pt-labeler');
+const { printBuffer } = require('brother-pt-labeler');
 const { createCanvas, Image } = require('canvas');
 const util = require('util');
 const pngparse = require('pngparse');
