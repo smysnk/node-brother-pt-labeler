@@ -42,8 +42,7 @@ const palette = new Uint8ClampedArray([
   255, 255, 255, 255,
   0,  0,  0, 255,
 ]);
-printBuffer(printerUrl, canvas.toBuffer('image/png',
-  { palette },
+printBuffer(printerUrl, canvas.toBuffer('image/png', { palette },
   { 
     tapeWidth,
     highResolution: false,  
