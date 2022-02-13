@@ -1,4 +1,5 @@
 node-brother-label-printer
+Copyright (C) Joshua Bellamy
 Copyright (C) Dennis Riehle
 
 This program is free software: you can redistribute it and/or modify
