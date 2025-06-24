@@ -6,8 +6,12 @@ const parseFile = util.promisify(pngparse.parseFile);
 const parse = util.promisify(pngparse.parse);
 
 export interface PrintOptions {
+  /** default: true */
+  autoCut?: boolean;
   /** default: 128 */
   blackwhiteThreshold?: number;
+  /** default: true */
+  halfCut?: boolean;
   /** default: false */
   highResolution?: boolean;
   /** default: 12  */
@@ -20,6 +24,10 @@ type PixelMatrix = { height: number, width: number, data: number[][] };
 
 function wait(time: number) {
   return new Promise(resolve => setTimeout(resolve, time));
+}
+
+function getConfigByte(value: boolean, position: number) {
+  return ((value ? 1 : 0) << position);
 }
 
 function convertToBlackAndWhiteMatrix(image: ParsedImageData, threshold: number): PixelMatrix {
@@ -68,8 +76,7 @@ function convertToBlackAndWhiteMatrix(image: ParsedImageData, threshold: number)
 
 function convertToLabelBuffer(
   pixelMatrix: PixelMatrix,
-  tapeWidth: number,
-  highResolution: boolean,
+  options: InternalOptions,
 ) {
   const data = [
     // Invalidate
@@ -87,7 +94,7 @@ function convertToLabelBuffer(
     // 0x08 Media length
     // 0x40 Priority given to print quality(Not used)
     // 0x80 Printer recovery always on
-    Buffer.from([0x1B, 0x69, 0x7A, 0x84, 0x00, tapeWidth, 0x00, 0xAA, 0x02, 0x00, 0x00, 0x00, 0x00]),
+    Buffer.from([0x1B, 0x69, 0x7A, 0x84, 0x00, options.tapeWidth, 0x00, 0xAA, 0x02, 0x00, 0x00, 0x00, 0x00]),
 
     // Various mode settings - Auto Cut
     Buffer.from([0x1B, 0x69, 0x4D, 0x40]),
@@ -97,10 +104,10 @@ function convertToLabelBuffer(
 
     // Advanced Setting Mode
     // 2bit half-cut, 3bit no chain printing, 4bit special tape, 6bit high-res, 7bit mirror
-    Buffer.from([0x1B, 0x69, 0x4B, 0x0C | ((highResolution ? 1 : 0) << 6)]),
+    Buffer.from([0x1B, 0x69, 0x4B, getConfigByte(options.halfCut, 2) | getConfigByte(true, 3) | getConfigByte(!options.autoCut, 4) | getConfigByte(options.highResolution, 6)]),
 
-    // Margin feed amount - 28 dots (2mm)
-    Buffer.from([0x1B, 0x69, 0x64, 14 * (highResolution ? 2 : 1), 0x00]),
+    // Margin feed amount - 2mm --> 28 dots on high-res otherwise 14 dots
+    Buffer.from([0x1B, 0x69, 0x64, 14 * (options.highResolution ? 2 : 1), 0x00]),
 
     // Enable TIFF - Compression
     // ..on P750W seems like has an issue with 0x1A command and doesn't cut or return back to idle mode
@@ -118,7 +125,7 @@ function convertToLabelBuffer(
     rowBuffer[1] = 0x11; // 17
     rowBuffer[3] = 0x0F;
 
-    let margin = (tapeWidth === 12) ? 21 : 0;
+    let margin = (options.tapeWidth === 12) ? 21 : 0;
     for (let y = 0; y < pixelMatrix.height; y++) {
       if (pixelMatrix.data[y][x] == 1) {
         let byteNum = (Math.floor((y + margin) / 8) + 4); // 3 for command + 1 for TIFF compression length byte
@@ -139,7 +146,9 @@ function convertToLabelBuffer(
 
 function resolveOptions(options: PrintOptions = {}): InternalOptions {
   return {
+    autoCut: true,
     blackwhiteThreshold: 128,
+    halfCut: true,
     highResolution: false,
     tapeWidth: 12 as const,
     ...options,
@@ -157,8 +166,7 @@ async function print(
       input.type === 'buffer' ? await parse(input.data) : await parseFile(input.data),
       resolvedOptions.blackwhiteThreshold,
     ),
-    resolvedOptions.tapeWidth,
-    resolvedOptions.highResolution,
+    resolvedOptions,
   );
 
   const printer = ipp.Printer(printerUrl);
