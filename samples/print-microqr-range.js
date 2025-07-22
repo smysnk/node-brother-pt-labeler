@@ -1,4 +1,5 @@
 const bwipjs = require('bwip-js');
+const { PNG } = require('pngjs');
 const { printBuffer } = require('../dist/index.js');
 
 async function createMicroQR(text) {
@@ -37,7 +38,11 @@ async function createMicroQR(text) {
     }
 
     // Final full cut
-    const blankPng = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAAC0lEQVR42mP8/x8AAwMCAK+X8VQAAAAASUVORK5CYII=', 'base64');
+    const blankPng = (() => {
+        const png = new PNG({ width: 1, height: 1 });
+        png.data.fill(255); // white pixel with full alpha
+        return PNG.sync.write(png);
+    })();
     await printBuffer(printerUrl, blankPng, {
         tapeWidth,
         halfCut: false,
