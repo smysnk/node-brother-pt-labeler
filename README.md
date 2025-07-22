@@ -3,7 +3,7 @@
 A node.js library to print labels on a Brother label printer using the [Internet Printing Protocol (IPP)](https://en.wikipedia.org/wiki/Internet_Printing_Protocol).
 
  - Tested on Brother PT-P750W.
- - Although poorly written, [Brother's PT-E550W/P750W/P710BT Raster Command Reference documentation](https://download.brother.com/welcome/docp100064/cv_pte550wp750wp710bt_eng_raster_101.pdf) is useful for implementation details.
+ - Although poorly written, [Brother's PT-E550W/P750W/P710BT Raster Command Reference documentation](https://github.com/smysnk/node-brother-pt-labeler/blob/master/cv_pte550wp750wp710bt_eng_raster_101.pdf) is useful for implementation details.
 
 ## How to print a PNG file
 First, you will need the IP address of your printer. The port for IPP is usually `631` and the path is usually `/ipp/print`. Please refer to your printer's manual for further information. Next, you will need a PNG file to print. Currently, PNG is the only file format supported by this library.
