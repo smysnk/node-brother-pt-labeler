@@ -26,8 +26,9 @@
     "nodemon": "^2.0.12"
   },
   "scripts": {
-    "dev": "nodemon -L -w src src/index.ts",
+    "dev": "nodemon -L --watch src --exec ts-node src/brother.ts",
     "build": "tsc",
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/brother.ts",
+    "test": "NODE_PATH=tests/mocks node --test tests"
   }
 }
