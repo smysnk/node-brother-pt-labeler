@@ -10,7 +10,8 @@
     "@sealsystems/ipp": "^2.7.7",
     "pngparse": "^2.0.1",
     "util": "^0.12.4",
-    "pngjs": "^7.0.0"
+    "pngjs": "^7.0.0",
+    "bwip-js": "^2.0.9"
   },
   "devDependencies": {
     "@types/node": "^16.11.7",

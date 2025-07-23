@@ -5,8 +5,12 @@ const { printBuffer } = require('../dist/index.js');
 async function createMicroQR(text) {
     return bwipjs.toBuffer({
         bcid: 'microqrcode',
-        text: text,
+        text,
         scale: 4,
+        includetext: true,
+        textxalign: 'center',
+        textfont: 'OCR-B',
+        textsize: 8,
     });
 }
 
